@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/.venv/
+.venv/
+
+# Frontend builds/cache
+frontend/dist/
+frontend/build/
+frontend/.output/
+frontend/.tanstack/
+frontend/node_modules/.vite/
+frontend/.vite/
+frontend/.next/
+frontend/.nuxt/
+
+# Env files
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Database / data generated
+*.db
+*.sqlite
+*.sqlite3
+data/raw/
+data/processed/
+
+# Keep seed data
+!data/seeds/
+!data/seeds/*.csv
+
+# Docker / logs
+*.log
+logs/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+*.tmp
+*.bak

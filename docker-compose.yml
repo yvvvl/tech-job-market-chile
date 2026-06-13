@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tech_jobs_postgres
+    environment:
+      POSTGRES_DB: tech_jobs_chile
+      POSTGRES_USER: techuser
+      POSTGRES_PASSWORD: techpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - tech_jobs_pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: tech_jobs_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  tech_jobs_pgdata:
