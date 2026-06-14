@@ -13,9 +13,11 @@ import {
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader, Section } from "@/components/ui-kit/Section";
 import { DarkTooltip } from "@/components/charts/ChartTooltip";
-import { formatCLP, monthlyTrend, technologies, type Technology } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+import { formatCLP } from "@/lib/mockData";
+import { getMarketOverview, type Technology } from "@/lib/api/market";
 
 export const Route = createFileRoute("/explorer")({
   head: () => ({
@@ -31,18 +33,66 @@ export const Route = createFileRoute("/explorer")({
 });
 
 function ExplorerPage() {
-  const t = useT();
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<Technology>(technologies[0]);
+const t = useT();
+const [query, setQuery] = useState("");
+const [selectedName, setSelectedName] = useState<string | null>(null);
 
-  const filtered = technologies.filter((tech) =>
-    tech.name.toLowerCase().includes(query.toLowerCase()),
+const overview = useQuery({
+  queryKey: ["overview"],
+  queryFn: getMarketOverview,
+});
+
+const technologies = overview.data?.technologies ?? [];
+const monthlyTrend = overview.data?.monthlyTrend ?? [];
+
+const selected =
+  technologies.find((tech) => tech.name === selectedName) ??
+  technologies[0];
+
+const filtered = technologies.filter((tech) =>
+  tech.name.toLowerCase().includes(query.toLowerCase()),
+);
+
+if (overview.isLoading) {
+  return (
+    <AppShell>
+      <PageHeader
+        eyebrow={t("exp.eyebrow")}
+        title={t("exp.title")}
+        description="Cargando tecnologías desde la API..."
+      />
+      <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-card">
+        <p className="text-sm text-muted-foreground">Cargando datos del mercado...</p>
+      </div>
+    </AppShell>
   );
+}
 
-  const trendData = monthlyTrend.map((m, i) => ({
-    month: m.month,
-    demand: Math.round((selected.demand / 12) * (0.85 + i * 0.025) * (1 + selected.trend / 200)),
-  }));
+if (overview.isError || !selected) {
+  return (
+    <AppShell>
+      <PageHeader
+        eyebrow={t("exp.eyebrow")}
+        title={t("exp.title")}
+        description="No se pudieron cargar los datos."
+      />
+      <div className="rounded-2xl border border-destructive/40 bg-card/50 p-6 shadow-card">
+        <p className="text-sm text-destructive">
+          Error conectando con la API. Revisa que FastAPI esté corriendo en localhost:8000.
+        </p>
+      </div>
+    </AppShell>
+  );
+}
+
+const trendData = monthlyTrend.map((m, i) => ({
+  month: m.month,
+  demand: Math.round(
+    (selected.demand / Math.max(monthlyTrend.length, 1)) *
+      (0.85 + i * 0.025) *
+      (1 + selected.trend / 200),
+  ),
+}));
 
   return (
     <AppShell>
@@ -70,7 +120,7 @@ function ExplorerPage() {
               filtered.map((tech) => (
                 <button
                   key={tech.name}
-                  onClick={() => setSelected(tech)}
+                  onClick={() => setSelectedName(tech.name)}
                   className={cn(
                     "w-full text-left px-3 py-2.5 rounded-lg border border-transparent transition flex items-center justify-between hover:bg-accent/40",
                     selected.name === tech.name && "border-primary/40 bg-primary/10",
@@ -111,7 +161,7 @@ function ExplorerPage() {
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <ScorePill label={t("exp.score.demand")} value={demandScore(selected)} />
+                <ScorePill label={t("exp.score.demand")} value={demandScore(selected, technologies)} />
                 <ScorePill label={t("exp.score.trend")} value={selected.trend} accent={selected.trend >= 0} />
                 <ScorePill label={t("exp.score.junior")} value={selected.juniorFriendly} suffix="%" />
               </div>
@@ -179,8 +229,8 @@ function ExplorerPage() {
   );
 }
 
-function demandScore(t: Technology) {
-  const max = Math.max(...technologies.map((x) => x.demand));
+function demandScore(t: Technology, allTechnologies: Technology[]) {
+  const max = Math.max(...allTechnologies.map((x) => x.demand), 1);
   return Math.round((t.demand / max) * 100);
 }
 
