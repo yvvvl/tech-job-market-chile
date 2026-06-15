@@ -1,6 +1,14 @@
 export type Technology = {
   name: string;
-  category: "Language" | "Frontend" | "Backend" | "Database" | "Cloud" | "DevOps" | "Data" | string;
+  category:
+    | "Language"
+    | "Frontend"
+    | "Backend"
+    | "Database"
+    | "Cloud"
+    | "DevOps"
+    | "Data"
+    | string;
   demand: number;
   trend: number;
   juniorFriendly: number;
@@ -40,6 +48,27 @@ export type MarketOverview = {
   }[];
 };
 
+export type LearningPath = {
+  title: string;
+  description: string;
+  techs: string[];
+  demandScore: number;
+  juniorScore: number;
+  timeWeeks: number;
+  totalDemand: number;
+  avgSalaryCLP: number;
+};
+
+export type RecommendationsResponse = {
+  learningPaths: LearningPath[];
+  suggested: Technology[];
+  metadata: {
+    totalTechnologies: number;
+    totalPaths: number;
+    source: string;
+  };
+};
+
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1";
 
 async function apiFetch<T>(path: string): Promise<T> {
@@ -58,4 +87,8 @@ export function getMarketOverview() {
 
 export function getTechnologies() {
   return apiFetch<Technology[]>("/stats/technologies");
+}
+
+export function getRecommendations() {
+  return apiFetch<RecommendationsResponse>("/recommendations");
 }
