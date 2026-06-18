@@ -2,6 +2,7 @@ import argparse
 import csv
 import re
 import sys
+from collections.abc import Sequence
 from datetime import date
 from pathlib import Path
 
@@ -169,7 +170,7 @@ def format_issue(level: str, line: int | str, column: str, message: str, value: 
     return f"[{level}] {location} | {column}: {message}"
 
 
-def validate_headers(headers: list[str] | None) -> tuple[list[str], list[str]]:
+def validate_headers(headers: Sequence[str] | None) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -276,13 +277,13 @@ def validate_dates(row: dict[str, str], line_num: int) -> tuple[list[str], list[
 
         try:
             parse_date(value)
-        except ValueError as error:
+        except ValueError as err:
             errors.append(
                 format_issue(
                     "ERROR",
                     line_num,
                     column,
-                    str(error),
+                    str(err),
                     value,
                 )
             )
@@ -335,13 +336,13 @@ def validate_salary(row: dict[str, str], line_num: int) -> tuple[list[str], list
             else:
                 salary_max = parsed
 
-        except ValueError as error:
+        except ValueError as err:
             errors.append(
                 format_issue(
                     "ERROR",
                     line_num,
                     column,
-                    str(error),
+                    str(err),
                     value,
                 )
             )

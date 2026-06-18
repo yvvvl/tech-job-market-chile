@@ -1,5 +1,4 @@
 import {
-  createContext,
   useEffect,
   useMemo,
   useState,
@@ -285,13 +284,6 @@ const es: Dict = {
 };
 
 const dicts: Record<Lang, Dict> = { en, es };
-
-type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: string) => string };
-const I18nCtx = createContext<Ctx>({
-  lang: "en",
-  setLang: () => {},
-  t: (k) => k,
-});
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
