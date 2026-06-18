@@ -29,8 +29,8 @@ class Technology(Base):
     __tablename__ = "technologies"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, nullable=False, index=True)
-    category = Column(String(50), nullable=False, index=True)
+    name = Column(String(180), unique=True, nullable=False, index=True)
+    category = Column(String(80), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     job_postings = relationship("JobPostingTechnology", back_populates="technology")
@@ -40,17 +40,28 @@ class JobPosting(Base):
     __tablename__ = "job_postings"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(220), nullable=False, index=True)
+    title = Column(String(260), nullable=False, index=True)
+
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False, index=True)
+
+    source = Column(String(80), nullable=False, default="manual", index=True)
+    source_url = Column(String(800), nullable=True, index=True)
+
     city = Column(String(120), nullable=True, index=True)
+    region = Column(String(120), nullable=True, index=True)
     modality = Column(String(50), nullable=True, index=True)
     seniority = Column(String(50), nullable=True, index=True)
     category = Column(String(50), nullable=True, index=True)
+
     description = Column(Text, nullable=True)
+
     salary_min = Column(Integer, nullable=True)
     salary_max = Column(Integer, nullable=True)
+    salary_currency = Column(String(20), nullable=True)
+
     published_at = Column(Date, nullable=True, index=True)
-    source = Column(String(80), nullable=False, default="manual", index=True)
+    collected_at = Column(Date, nullable=True, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     company = relationship("Company", back_populates="job_postings")
@@ -68,12 +79,14 @@ class JobPostingTechnology(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True)
+
     job_posting_id = Column(
         Integer,
         ForeignKey("job_postings.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
+
     technology_id = Column(
         Integer,
         ForeignKey("technologies.id", ondelete="CASCADE"),
