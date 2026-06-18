@@ -30,6 +30,43 @@ El proyecto actualmente permite:
 - Probar endpoints desde Bruno o desde la documentación automática de FastAPI.
 
 ---
+## Vista del producto
+
+### Dashboard del mercado laboral
+
+El panel resume ofertas, empresas, tecnologías, ciudades, seniority y distribución salarial a partir del dataset importado.
+
+![Dashboard general](docs/images/dashboard-overview.png)
+
+![Analítica del dashboard](docs/images/dashboard-analytics.png)
+
+### Explorador de tecnologías
+
+Permite consultar demanda, accesibilidad para perfiles junior, tecnologías relacionadas y métricas asociadas a cada skill.
+
+![Explorador de tecnologías](docs/images/technology-explorer.png)
+
+### Rutas de aprendizaje
+
+Genera rutas de carrera basadas en la demanda observada dentro del dataset.
+
+![Rutas de aprendizaje](docs/images/career-recommendations.png)
+
+<details>
+<summary>API y validación técnica</summary>
+
+### Documentación OpenAPI
+
+![Documentación de la API](docs/images/api-documentation.png)
+
+### Pruebas con Bruno
+
+![Respuesta del endpoint overview](docs/images/bruno-overview.png)
+
+![Endpoint de calidad de datos](docs/images/bruno-data-quality.png)
+
+</details>
+
 
 ## Stack técnico
 
