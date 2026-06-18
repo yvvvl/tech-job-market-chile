@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n-hooks";
 
 export function StatCard({
   label,
@@ -22,9 +22,15 @@ export function StatCard({
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition pointer-events-none bg-hero" />
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-          <p className="mt-3 font-display text-3xl font-semibold tracking-tight">{value}</p>
-          {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
+          <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-3 font-display text-3xl font-semibold tracking-tight">
+            {value}
+          </p>
+          {hint ? (
+            <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+          ) : null}
         </div>
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
           <Icon className="h-4 w-4" />
@@ -39,7 +45,11 @@ export function StatCard({
               : "border-destructive/30 text-destructive bg-destructive/10",
           )}
         >
-          {positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+          {positive ? (
+            <ArrowUpRight className="h-3 w-3" />
+          ) : (
+            <ArrowDownRight className="h-3 w-3" />
+          )}
           {Math.abs(delta)}% {t("stat.vsLastMonth")}
         </div>
       ) : null}

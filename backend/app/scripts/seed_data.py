@@ -1,14 +1,18 @@
 import csv
 from datetime import date
-from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from app.core.config import ROOT_DIR
 from app.database.models import Company, JobPosting, JobPostingTechnology, Technology
 from app.database.session import SessionLocal
-from app.pipeline.tech_rules import TECHNOLOGIES, extract_technologies, infer_job_category, infer_modality, infer_seniority
-
+from app.pipeline.tech_rules import (
+    TECHNOLOGIES,
+    extract_technologies,
+    infer_job_category,
+    infer_modality,
+    infer_seniority,
+)
 
 CSV_PATH = ROOT_DIR / "data" / "seeds" / "sample_postings.csv"
 

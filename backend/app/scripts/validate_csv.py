@@ -5,7 +5,6 @@ import sys
 from datetime import date
 from pathlib import Path
 
-
 REQUIRED_COLUMNS = {
     "source",
     "source_url",
@@ -111,8 +110,8 @@ def parse_date(value: str | None) -> date | None:
 
     try:
         return date.fromisoformat(cleaned)
-    except ValueError:
-        raise ValueError("Debe tener formato YYYY-MM-DD.")
+    except ValueError as err:
+        raise ValueError("Debe tener formato YYYY-MM-DD.") from err
 
 
 def parse_int(value: str | None) -> int | None:
@@ -137,7 +136,8 @@ def parse_int(value: str | None) -> int | None:
     if not normalized.isdigit():
         raise ValueError(
             "Debe ser un número entero. "
-            "Si aparece texto aquí, probablemente el CSV está desalineado por una coma sin comillas."
+            "Si aparece texto aquí, probablemente el CSV está desalineado "
+            "por una coma sin comillas."
         )
 
     return int(normalized)
@@ -181,11 +181,7 @@ def validate_headers(headers: list[str] | None) -> tuple[list[str], list[str]]:
     missing = REQUIRED_COLUMNS - set(normalized_headers)
     extra = set(normalized_headers) - REQUIRED_COLUMNS
 
-    duplicated = {
-        header
-        for header in normalized_headers
-        if normalized_headers.count(header) > 1
-    }
+    duplicated = {header for header in normalized_headers if normalized_headers.count(header) > 1}
 
     if missing:
         errors.append(
@@ -424,7 +420,9 @@ def validate_taxonomy(row: dict[str, str], line_num: int) -> list[str]:
                 "WARNING",
                 line_num,
                 "category",
-                "Categoría no estándar. Sugeridas: Backend, Frontend, Fullstack, Data, DevOps, QA, Support, Security, Management, Other.",
+                "Categoría no estándar. Sugeridas: Backend, Frontend, "
+                "Fullstack, Data, DevOps, QA, Support, Security, Management, "
+                "Other.",
                 clean_text(row.get("category")),
             )
         )
@@ -530,12 +528,17 @@ def validate_duplicates(
         key = f"{title}::{company}"
 
         if key in seen_title_company:
+            message = (
+                "Posible duplicado por título y empresa. "
+                f"Ya apareció en línea {seen_title_company[key]}."
+            )
+
             warnings.append(
                 format_issue(
                     "WARNING",
                     line_num,
                     "title/company",
-                    f"Posible duplicado por título y empresa. Ya apareció en línea {seen_title_company[key]}.",
+                    message,
                     f"{title} / {company}",
                 )
             )

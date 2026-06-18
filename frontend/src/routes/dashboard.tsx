@@ -20,7 +20,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader, Section } from "@/components/ui-kit/Section";
 import { StatCard } from "@/components/ui-kit/StatCard";
 import { DarkTooltip } from "@/components/charts/ChartTooltip";
-import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n-hooks";
 import { formatNumber } from "@/lib/mockData";
 import { getMarketOverview } from "@/lib/api/market";
 
@@ -48,10 +48,10 @@ const CHART_COLORS = [
 
 function DashboardPage() {
   const t = useT();
-const overview = useQuery({
-  queryKey: ["overview"],
-  queryFn: getMarketOverview,
-});
+  const overview = useQuery({
+    queryKey: ["overview"],
+    queryFn: getMarketOverview,
+  });
 
   if (overview.isLoading || !overview.data) {
     return (
@@ -78,10 +78,33 @@ const overview = useQuery({
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label={t("stat.totalJobs")} value={formatNumber(d.stats.totalJobs)} delta={8} icon={Briefcase} hint={t("stat.hint.active")} />
-        <StatCard label={t("stat.companies")} value={formatNumber(d.stats.companies)} delta={4} icon={Building2} hint={t("stat.hint.hiringMonth")} />
-        <StatCard label={t("stat.technologies")} value={formatNumber(d.stats.technologies)} delta={2} icon={Cpu} hint={t("stat.hint.tracked")} />
-        <StatCard label={t("stat.cities")} value={formatNumber(d.stats.cities)} icon={MapPin} hint={t("stat.hint.acrossChile")} />
+        <StatCard
+          label={t("stat.totalJobs")}
+          value={formatNumber(d.stats.totalJobs)}
+          delta={8}
+          icon={Briefcase}
+          hint={t("stat.hint.active")}
+        />
+        <StatCard
+          label={t("stat.companies")}
+          value={formatNumber(d.stats.companies)}
+          delta={4}
+          icon={Building2}
+          hint={t("stat.hint.hiringMonth")}
+        />
+        <StatCard
+          label={t("stat.technologies")}
+          value={formatNumber(d.stats.technologies)}
+          delta={2}
+          icon={Cpu}
+          hint={t("stat.hint.tracked")}
+        />
+        <StatCard
+          label={t("stat.cities")}
+          value={formatNumber(d.stats.cities)}
+          icon={MapPin}
+          hint={t("stat.hint.acrossChile")}
+        />
       </div>
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
@@ -94,12 +117,33 @@ const overview = useQuery({
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topTechs}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="name" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--color-muted)", opacity: 0.25 }} />
-                <Bar dataKey="demand" name={t("chart.postings")} radius={[6, 6, 0, 0]}>
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  content={<DarkTooltip />}
+                  cursor={{ fill: "var(--color-muted)", opacity: 0.25 }}
+                />
+                <Bar
+                  dataKey="demand"
+                  name={t("chart.postings")}
+                  radius={[6, 6, 0, 0]}
+                >
                   {topTechs.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -107,7 +151,10 @@ const overview = useQuery({
           </div>
         </Section>
 
-        <Section title={t("dash.category.title")} description={t("dash.category.desc")}>
+        <Section
+          title={t("dash.category.title")}
+          description={t("dash.category.desc")}
+        >
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -122,14 +169,20 @@ const overview = useQuery({
                   strokeWidth={2}
                 >
                   {d.categoryBreakdown.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<DarkTooltip />} />
                 <Legend
                   verticalAlign="bottom"
                   iconType="circle"
-                  wrapperStyle={{ fontSize: 11, color: "var(--color-muted-foreground)" }}
+                  wrapperStyle={{
+                    fontSize: 11,
+                    color: "var(--color-muted-foreground)",
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -138,21 +191,52 @@ const overview = useQuery({
       </div>
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
-        <Section title={t("dash.cities.title")} description={t("dash.cities.desc")}>
+        <Section
+          title={t("dash.cities.title")}
+          description={t("dash.cities.desc")}
+        >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={d.cities} layout="vertical">
-                <CartesianGrid stroke="var(--color-border)" horizontal={false} />
-                <XAxis type="number" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="city" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} width={110} />
-                <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--color-muted)", opacity: 0.25 }} />
-                <Bar dataKey="jobs" name={t("chart.jobs")} fill="var(--color-chart-3)" radius={[0, 6, 6, 0]} />
+                <CartesianGrid
+                  stroke="var(--color-border)"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="city"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  width={110}
+                />
+                <Tooltip
+                  content={<DarkTooltip />}
+                  cursor={{ fill: "var(--color-muted)", opacity: 0.25 }}
+                />
+                <Bar
+                  dataKey="jobs"
+                  name={t("chart.jobs")}
+                  fill="var(--color-chart-3)"
+                  radius={[0, 6, 6, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Section>
 
-        <Section title={t("dash.seniority.title")} description={t("dash.seniority.desc")}>
+        <Section
+          title={t("dash.seniority.title")}
+          description={t("dash.seniority.desc")}
+        >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -163,10 +247,16 @@ const overview = useQuery({
                   outerRadius={95}
                   stroke="var(--color-background)"
                   strokeWidth={2}
-                  label={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+                  label={{
+                    fontSize: 11,
+                    fill: "var(--color-muted-foreground)",
+                  }}
                 >
                   {d.seniority.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<DarkTooltip />} />
@@ -175,15 +265,37 @@ const overview = useQuery({
           </div>
         </Section>
 
-        <Section title={t("dash.salary.title")} description={t("dash.salary.desc")}>
+        <Section
+          title={t("dash.salary.title")}
+          description={t("dash.salary.desc")}
+        >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={d.salaryRanges}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="range" stroke="var(--color-muted-foreground)" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--color-muted)", opacity: 0.25 }} />
-                <Bar dataKey="count" name={t("chart.postings")} fill="var(--color-chart-2)" radius={[6, 6, 0, 0]} />
+                <XAxis
+                  dataKey="range"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  content={<DarkTooltip />}
+                  cursor={{ fill: "var(--color-muted)", opacity: 0.25 }}
+                />
+                <Bar
+                  dataKey="count"
+                  name={t("chart.postings")}
+                  fill="var(--color-chart-2)"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -191,17 +303,51 @@ const overview = useQuery({
       </div>
 
       <div className="mt-6">
-        <Section title={t("dash.trend.title")} description={t("dash.trend.desc")}>
+        <Section
+          title={t("dash.trend.title")}
+          description={t("dash.trend.desc")}
+        >
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={d.monthlyTrend}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip content={<DarkTooltip />} />
-                <Legend wrapperStyle={{ fontSize: 12, color: "var(--color-muted-foreground)" }} iconType="circle" />
-                <Line type="monotone" dataKey="jobs" name={t("chart.totalJobs")} stroke="var(--color-chart-1)" strokeWidth={2.5} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="junior" name={t("chart.juniorFriendly")} stroke="var(--color-chart-2)" strokeWidth={2.5} dot={{ r: 3 }} />
+                <Legend
+                  wrapperStyle={{
+                    fontSize: 12,
+                    color: "var(--color-muted-foreground)",
+                  }}
+                  iconType="circle"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="jobs"
+                  name={t("chart.totalJobs")}
+                  stroke="var(--color-chart-1)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="junior"
+                  name={t("chart.juniorFriendly")}
+                  stroke="var(--color-chart-2)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -216,7 +362,10 @@ function SkeletonGrid() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-32 rounded-2xl border border-border/60 bg-card/40 animate-pulse" />
+          <div
+            key={i}
+            className="h-32 rounded-2xl border border-border/60 bg-card/40 animate-pulse"
+          />
         ))}
       </div>
       <div className="grid lg:grid-cols-3 gap-6">

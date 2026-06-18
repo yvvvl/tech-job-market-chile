@@ -3,11 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.routers.health import router as health_router
-from app.routers.stats import router as stats_router
 from app.routers.recommendations import router as recommendations_router
-
-
-
+from app.routers.stats import router as stats_router
 
 app = FastAPI(
     title=settings.app_name,

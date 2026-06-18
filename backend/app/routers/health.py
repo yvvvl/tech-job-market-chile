@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from app.database.models import Company, JobPosting, Technology
 from app.database.session import check_database_connection, get_db
 
-
 router = APIRouter(prefix="/api/v1", tags=["Health"])
 
 

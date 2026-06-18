@@ -2,13 +2,13 @@ from collections import defaultdict
 from datetime import date
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query as ApiQuery
+from fastapi import APIRouter, Depends
+from fastapi import Query as ApiQuery
 from sqlalchemy import case, func
 from sqlalchemy.orm import Session
 
-from app.database.models import Company, JobPosting, JobPostingTechnology, Technology
+from app.database.models import JobPosting, JobPostingTechnology, Technology
 from app.database.session import get_db
-
 
 router = APIRouter(prefix="/api/v1/stats", tags=["Stats"])
 
@@ -59,7 +59,9 @@ def normalize_slug(value: str | None) -> str | None:
 
 def build_filters(
     seniority: str | None = ApiQuery(default=None, description="Ej: junior, trainee, senior"),
-    category: str | None = ApiQuery(default=None, description="Ej: backend, frontend, data, devops"),
+    category: str | None = ApiQuery(
+        default=None, description="Ej: backend, frontend, data, devops"
+    ),
     city: str | None = ApiQuery(default=None, description="Ej: Santiago, Remote, Concepción"),
     modality: str | None = ApiQuery(default=None, description="Ej: remoto, hibrido, presencial"),
     source: str | None = ApiQuery(default=None, description="Ej: LinkedIn, GetOnBoard, Laborum"),
@@ -200,9 +202,9 @@ def get_technology_rows(
         by_category[item["category"]].append(item["name"])
 
     for item in result:
-        item["related"] = [
-            name for name in by_category[item["category"]] if name != item["name"]
-        ][:4]
+        item["related"] = [name for name in by_category[item["category"]] if name != item["name"]][
+            :4
+        ]
 
     return result
 
@@ -215,11 +217,7 @@ def get_cities_rows(db: Session, filters: dict[str, Any]) -> list[dict]:
 
     query = apply_job_filters(query, filters)
 
-    rows = (
-        query.group_by(JobPosting.city)
-        .order_by(func.count(JobPosting.id).desc())
-        .all()
-    )
+    rows = query.group_by(JobPosting.city).order_by(func.count(JobPosting.id).desc()).all()
 
     return [
         {
@@ -238,11 +236,7 @@ def get_seniority_rows(db: Session, filters: dict[str, Any]) -> list[dict]:
 
     query = apply_job_filters(query, filters)
 
-    rows = (
-        query.group_by(JobPosting.seniority)
-        .order_by(func.count(JobPosting.id).desc())
-        .all()
-    )
+    rows = query.group_by(JobPosting.seniority).order_by(func.count(JobPosting.id).desc()).all()
 
     return [
         {
@@ -268,11 +262,7 @@ def get_category_breakdown(db: Session, filters: dict[str, Any]) -> list[dict]:
 
     query = apply_job_filters(query, filters)
 
-    rows = (
-        query.group_by(JobPosting.category)
-        .order_by(func.count(JobPosting.id).desc())
-        .all()
-    )
+    rows = query.group_by(JobPosting.category).order_by(func.count(JobPosting.id).desc()).all()
 
     return [
         {
@@ -334,11 +324,7 @@ def get_monthly_trend(db: Session, filters: dict[str, Any]) -> list[dict]:
 
     query = apply_job_filters(query, filters)
 
-    rows = (
-        query.group_by(month_expr)
-        .order_by(month_expr)
-        .all()
-    )
+    rows = query.group_by(month_expr).order_by(month_expr).all()
 
     return [
         {
@@ -458,13 +444,9 @@ def get_data_quality(
 
     missing_published_at = base_query.filter(JobPosting.published_at.is_(None)).count()
 
-    unknown_seniority = base_query.filter(
-        JobPosting.seniority.in_(["unknown", None])
-    ).count()
+    unknown_seniority = base_query.filter(JobPosting.seniority.in_(["unknown", None])).count()
 
-    unknown_modality = base_query.filter(
-        JobPosting.modality.in_(["unknown", None])
-    ).count()
+    unknown_modality = base_query.filter(JobPosting.modality.in_(["unknown", None])).count()
 
     unknown_category = base_query.filter(
         JobPosting.category.in_(["unknown", "other", None])
@@ -497,10 +479,7 @@ def get_data_quality(
         for row in duplicate_urls_query.all()
     ]
 
-    blocking_issues = (
-        jobs_without_technologies
-        + len(duplicate_urls)
-    )
+    blocking_issues = jobs_without_technologies + len(duplicate_urls)
 
     soft_issues = (
         missing_salary

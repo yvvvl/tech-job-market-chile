@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from app.database.models import JobPosting, JobPostingTechnology, Technology
 from app.database.session import get_db
 
-
 router = APIRouter(prefix="/api/v1", tags=["Recommendations"])
 
 
@@ -32,7 +31,9 @@ CAREER_PATHS = [
     },
     {
         "title": "Backend Engineer",
-        "description": "Desarrolla APIs, servicios y lógica de negocio usando bases de datos y cloud.",
+        "description": (
+            "Desarrolla APIs, servicios y lógica de negocio usando bases de datos y cloud."
+        ),
         "target_techs": [
             "Python",
             "FastAPI",
@@ -51,7 +52,9 @@ CAREER_PATHS = [
     },
     {
         "title": "Data Analyst",
-        "description": "Transforma datos en reportes, dashboards e insights para toma de decisiones.",
+        "description": (
+            "Transforma datos en reportes, dashboards e insights para toma de decisiones."
+        ),
         "target_techs": [
             "SQL",
             "Python",
@@ -138,9 +141,9 @@ def get_technology_metrics(db: Session) -> list[dict[str, Any]]:
         by_category[item["category"]].append(item["name"])
 
     for item in metrics:
-        item["related"] = [
-            name for name in by_category[item["category"]] if name != item["name"]
-        ][:4]
+        item["related"] = [name for name in by_category[item["category"]] if name != item["name"]][
+            :4
+        ]
 
     return metrics
 
@@ -181,9 +184,7 @@ def weighted_average(items: list[dict[str, Any]], key: str) -> int:
     if total_demand == 0:
         return 0
 
-    return round(
-        sum(item[key] * item["demand"] for item in items) / total_demand
-    )
+    return round(sum(item[key] * item["demand"] for item in items) / total_demand)
 
 
 @router.get("/recommendations")
