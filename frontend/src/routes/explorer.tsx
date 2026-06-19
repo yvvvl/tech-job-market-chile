@@ -14,7 +14,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader, Section } from "@/components/ui-kit/Section";
 import { DarkTooltip } from "@/components/charts/ChartTooltip";
 import { cn } from "@/lib/utils";
-import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n-hooks";
 import { useQuery } from "@tanstack/react-query";
 import { formatCLP } from "@/lib/mockData";
 import { getMarketOverview, type Technology } from "@/lib/api/market";
@@ -25,7 +25,8 @@ export const Route = createFileRoute("/explorer")({
       { title: "Technology Explorer — TechMarket CL" },
       {
         name: "description",
-        content: "Search any technology and see its demand, trend and related stack in Chile.",
+        content:
+          "Search any technology and see its demand, trend and related stack in Chile.",
       },
     ],
   }),
@@ -33,66 +34,68 @@ export const Route = createFileRoute("/explorer")({
 });
 
 function ExplorerPage() {
-const t = useT();
-const [query, setQuery] = useState("");
-const [selectedName, setSelectedName] = useState<string | null>(null);
+  const t = useT();
+  const [query, setQuery] = useState("");
+  const [selectedName, setSelectedName] = useState<string | null>(null);
 
-const overview = useQuery({
-  queryKey: ["overview"],
-  queryFn: getMarketOverview,
-});
+  const overview = useQuery({
+    queryKey: ["overview"],
+    queryFn: getMarketOverview,
+  });
 
-const technologies = overview.data?.technologies ?? [];
-const monthlyTrend = overview.data?.monthlyTrend ?? [];
+  const technologies = overview.data?.technologies ?? [];
+  const monthlyTrend = overview.data?.monthlyTrend ?? [];
 
-const selected =
-  technologies.find((tech) => tech.name === selectedName) ??
-  technologies[0];
+  const selected =
+    technologies.find((tech) => tech.name === selectedName) ?? technologies[0];
 
-const filtered = technologies.filter((tech) =>
-  tech.name.toLowerCase().includes(query.toLowerCase()),
-);
-
-if (overview.isLoading) {
-  return (
-    <AppShell>
-      <PageHeader
-        eyebrow={t("exp.eyebrow")}
-        title={t("exp.title")}
-        description="Cargando tecnologías desde la API..."
-      />
-      <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-card">
-        <p className="text-sm text-muted-foreground">Cargando datos del mercado...</p>
-      </div>
-    </AppShell>
+  const filtered = technologies.filter((tech) =>
+    tech.name.toLowerCase().includes(query.toLowerCase()),
   );
-}
 
-if (overview.isError || !selected) {
-  return (
-    <AppShell>
-      <PageHeader
-        eyebrow={t("exp.eyebrow")}
-        title={t("exp.title")}
-        description="No se pudieron cargar los datos."
-      />
-      <div className="rounded-2xl border border-destructive/40 bg-card/50 p-6 shadow-card">
-        <p className="text-sm text-destructive">
-          Error conectando con la API. Revisa que FastAPI esté corriendo en localhost:8000.
-        </p>
-      </div>
-    </AppShell>
-  );
-}
+  if (overview.isLoading) {
+    return (
+      <AppShell>
+        <PageHeader
+          eyebrow={t("exp.eyebrow")}
+          title={t("exp.title")}
+          description="Cargando tecnologías desde la API..."
+        />
+        <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-card">
+          <p className="text-sm text-muted-foreground">
+            Cargando datos del mercado...
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
 
-const trendData = monthlyTrend.map((m, i) => ({
-  month: m.month,
-  demand: Math.round(
-    (selected.demand / Math.max(monthlyTrend.length, 1)) *
-      (0.85 + i * 0.025) *
-      (1 + selected.trend / 200),
-  ),
-}));
+  if (overview.isError || !selected) {
+    return (
+      <AppShell>
+        <PageHeader
+          eyebrow={t("exp.eyebrow")}
+          title={t("exp.title")}
+          description="No se pudieron cargar los datos."
+        />
+        <div className="rounded-2xl border border-destructive/40 bg-card/50 p-6 shadow-card">
+          <p className="text-sm text-destructive">
+            Error conectando con la API. Revisa que FastAPI esté corriendo en
+            localhost:8000.
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  const trendData = monthlyTrend.map((m, i) => ({
+    month: m.month,
+    demand: Math.round(
+      (selected.demand / Math.max(monthlyTrend.length, 1)) *
+        (0.85 + i * 0.025) *
+        (1 + selected.trend / 200),
+    ),
+  }));
 
   return (
     <AppShell>
@@ -123,19 +126,26 @@ const trendData = monthlyTrend.map((m, i) => ({
                   onClick={() => setSelectedName(tech.name)}
                   className={cn(
                     "w-full text-left px-3 py-2.5 rounded-lg border border-transparent transition flex items-center justify-between hover:bg-accent/40",
-                    selected.name === tech.name && "border-primary/40 bg-primary/10",
+                    selected.name === tech.name &&
+                      "border-primary/40 bg-primary/10",
                   )}
                 >
                   <div>
                     <p className="text-sm font-medium">{tech.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{tech.category}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {tech.category}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-mono">{tech.demand.toLocaleString()}</p>
+                    <p className="text-xs font-mono">
+                      {tech.demand.toLocaleString()}
+                    </p>
                     <p
                       className={cn(
                         "text-[10px]",
-                        tech.trend >= 0 ? "text-[color:var(--color-success)]" : "text-destructive",
+                        tech.trend >= 0
+                          ? "text-[color:var(--color-success)]"
+                          : "text-destructive",
                       )}
                     >
                       {tech.trend >= 0 ? "+" : ""}
@@ -152,7 +162,9 @@ const trendData = monthlyTrend.map((m, i) => ({
           <div className="rounded-2xl border border-border/60 bg-card/60 p-6 shadow-card">
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-primary">{selected.category}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-primary">
+                  {selected.category}
+                </p>
                 <h2 className="mt-1 font-display text-3xl font-semibold tracking-tight">
                   {selected.name}
                 </h2>
@@ -161,35 +173,85 @@ const trendData = monthlyTrend.map((m, i) => ({
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <ScorePill label={t("exp.score.demand")} value={demandScore(selected, technologies)} />
-                <ScorePill label={t("exp.score.trend")} value={selected.trend} accent={selected.trend >= 0} />
-                <ScorePill label={t("exp.score.junior")} value={selected.juniorFriendly} suffix="%" />
+                <ScorePill
+                  label={t("exp.score.demand")}
+                  value={demandScore(selected, technologies)}
+                />
+                <ScorePill
+                  label={t("exp.score.trend")}
+                  value={selected.trend}
+                  accent={selected.trend >= 0}
+                />
+                <ScorePill
+                  label={t("exp.score.junior")}
+                  value={selected.juniorFriendly}
+                  suffix="%"
+                />
               </div>
             </div>
 
             <div className="mt-6 grid sm:grid-cols-3 gap-4">
-              <KV label={t("exp.kv.postings")} value={selected.demand.toLocaleString()} icon={<Users className="h-4 w-4" />} />
-              <KV label={t("exp.kv.avgSalary")} value={formatCLP(selected.avgSalaryCLP)} icon={<ArrowUpRight className="h-4 w-4" />} />
-              <KV label={t("exp.kv.momentum")} value={`${selected.trend > 0 ? "+" : ""}${selected.trend}% mo/mo`} icon={<TrendingUp className="h-4 w-4" />} />
+              <KV
+                label={t("exp.kv.postings")}
+                value={selected.demand.toLocaleString()}
+                icon={<Users className="h-4 w-4" />}
+              />
+              <KV
+                label={t("exp.kv.avgSalary")}
+                value={formatCLP(selected.avgSalaryCLP)}
+                icon={<ArrowUpRight className="h-4 w-4" />}
+              />
+              <KV
+                label={t("exp.kv.momentum")}
+                value={`${selected.trend > 0 ? "+" : ""}${selected.trend}% mo/mo`}
+                icon={<TrendingUp className="h-4 w-4" />}
+              />
             </div>
           </div>
 
-          <Section title={t("exp.trend.title")} description={`${t("exp.trend.desc")} ${selected.name}`}>
+          <Section
+            title={t("exp.trend.title")}
+            description={`${t("exp.trend.desc")} ${selected.name}`}
+          >
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData}>
-                  <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                  <CartesianGrid
+                    stroke="var(--color-border)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <Tooltip content={<DarkTooltip />} />
-                  <Line type="monotone" dataKey="demand" name={t("chart.postings")} stroke="var(--color-primary)" strokeWidth={2.5} dot={{ r: 3 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="demand"
+                    name={t("chart.postings")}
+                    stroke="var(--color-primary)"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </Section>
 
           <div className="grid sm:grid-cols-2 gap-6">
-            <Section title={t("exp.related.title")} description={t("exp.related.desc")}>
+            <Section
+              title={t("exp.related.title")}
+              description={t("exp.related.desc")}
+            >
               <div className="flex flex-wrap gap-2">
                 {selected.related.map((r) => (
                   <span
@@ -202,10 +264,15 @@ const trendData = monthlyTrend.map((m, i) => ({
               </div>
             </Section>
 
-            <Section title={t("exp.junior.title")} description={t("exp.junior.desc")}>
+            <Section
+              title={t("exp.junior.title")}
+              description={t("exp.junior.desc")}
+            >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t("exp.junior.label")}</span>
+                  <span className="text-muted-foreground">
+                    {t("exp.junior.label")}
+                  </span>
                   <span className="font-mono">{selected.juniorFriendly}%</span>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -218,7 +285,11 @@ const trendData = monthlyTrend.map((m, i) => ({
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t("exp.junior.summary.a")} {Math.round((selected.demand * selected.juniorFriendly) / 100).toLocaleString()} {t("exp.junior.summary.b")}
+                  {t("exp.junior.summary.a")}{" "}
+                  {Math.round(
+                    (selected.demand * selected.juniorFriendly) / 100,
+                  ).toLocaleString()}{" "}
+                  {t("exp.junior.summary.b")}
                 </p>
               </div>
             </Section>
@@ -247,7 +318,9 @@ function ScorePill({
 }) {
   return (
     <div className="rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-center min-w-[88px]">
-      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{label}</p>
+      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+        {label}
+      </p>
       <p
         className={cn(
           "mt-1 font-display text-lg font-semibold",
@@ -263,7 +336,15 @@ function ScorePill({
   );
 }
 
-function KV({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
+function KV({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) {
   return (
     <div className="rounded-xl border border-border/60 bg-background/40 px-4 py-3">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">

@@ -14,7 +14,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader, Section } from "@/components/ui-kit/Section";
 import { formatCLP } from "@/lib/mockData";
 import { getRecommendations, type LearningPath } from "@/lib/api/market";
-import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n-hooks";
 
 export const Route = createFileRoute("/recommendations")({
   head: () => ({
@@ -31,8 +31,14 @@ export const Route = createFileRoute("/recommendations")({
 });
 
 const pathKeyMap: Record<string, { title: string; desc: string }> = {
-  "Frontend Engineer": { title: "path.frontend.title", desc: "path.frontend.desc" },
-  "Backend Engineer": { title: "path.backend.title", desc: "path.backend.desc" },
+  "Frontend Engineer": {
+    title: "path.frontend.title",
+    desc: "path.frontend.desc",
+  },
+  "Backend Engineer": {
+    title: "path.backend.title",
+    desc: "path.backend.desc",
+  },
   "Data Analyst": { title: "path.data.title", desc: "path.data.desc" },
   "Cloud & DevOps": { title: "path.cloud.title", desc: "path.cloud.desc" },
 };
@@ -56,7 +62,8 @@ function RecommendationsPage() {
 
         <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-card">
           <p className="text-sm text-muted-foreground">
-            Cargando recomendaciones basadas en tecnologías reales del backend...
+            Cargando recomendaciones basadas en tecnologías reales del
+            backend...
           </p>
         </div>
       </AppShell>
@@ -74,7 +81,8 @@ function RecommendationsPage() {
 
         <div className="rounded-2xl border border-destructive/40 bg-card/50 p-6 shadow-card">
           <p className="text-sm text-destructive">
-            Error conectando con la API. Revisa que FastAPI esté corriendo en localhost:8000.
+            Error conectando con la API. Revisa que FastAPI esté corriendo en
+            localhost:8000.
           </p>
         </div>
       </AppShell>
@@ -112,11 +120,15 @@ function RecommendationsPage() {
               >
                 <div>
                   <p className="text-sm font-semibold">{tech.name}</p>
-                  <p className="text-xs text-muted-foreground">{tech.category}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {tech.category}
+                  </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="font-mono text-xs">{tech.demand.toLocaleString()}</p>
+                  <p className="font-mono text-xs">
+                    {tech.demand.toLocaleString()}
+                  </p>
                   <p className="text-[10px] text-[color:var(--color-success)]">
                     {tech.juniorFriendly}% {t("rec.juniorSuffix")}
                   </p>
@@ -189,9 +201,7 @@ function CareerPathCard({ path }: { path: LearningPath }) {
             Salario promedio estimado
           </span>
 
-          <span className="font-mono">
-            {formatCLP(path.avgSalaryCLP)}
-          </span>
+          <span className="font-mono">{formatCLP(path.avgSalaryCLP)}</span>
         </div>
       </div>
 

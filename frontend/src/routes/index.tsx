@@ -31,7 +31,7 @@ import {
   technologies,
   formatNumber,
 } from "@/lib/mockData";
-import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n-hooks";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -42,7 +42,10 @@ export const Route = createFileRoute("/")({
         content:
           "Discover what technologies companies in Chile are hiring for. Live market overview, salary insights and junior opportunities.",
       },
-      { property: "og:title", content: "TechMarket CL — Chilean Tech Job Intelligence" },
+      {
+        property: "og:title",
+        content: "TechMarket CL — Chilean Tech Job Intelligence",
+      },
       {
         property: "og:description",
         content:
@@ -53,7 +56,9 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
-const topTechs = [...technologies].sort((a, b) => b.demand - a.demand).slice(0, 6);
+const topTechs = [...technologies]
+  .sort((a, b) => b.demand - a.demand)
+  .slice(0, 6);
 
 function LandingPage() {
   const t = useT();
@@ -66,7 +71,8 @@ function LandingPage() {
         <div className="relative mx-auto max-w-3xl text-center animate-fade-up">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <Sparkles className="h-3 w-3 text-primary" />
-            {t("landing.badge")} · {formatNumber(stats.totalJobs)} {t("landing.activePostings")}
+            {t("landing.badge")} · {formatNumber(stats.totalJobs)}{" "}
+            {t("landing.activePostings")}
           </div>
           <h1 className="mt-6 font-display text-4xl sm:text-6xl font-semibold tracking-tight">
             <span className="text-gradient">{t("landing.h1.a")}</span>
@@ -100,22 +106,51 @@ function LandingPage() {
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                   {t("landing.chart.eyebrow")}
                 </p>
-                <p className="font-display text-2xl font-semibold">{formatNumber(stats.totalJobs)}</p>
+                <p className="font-display text-2xl font-semibold">
+                  {formatNumber(stats.totalJobs)}
+                </p>
               </div>
-              <div className="text-xs text-[color:var(--color-success)]">{t("landing.chart.delta")}</div>
+              <div className="text-xs text-[color:var(--color-success)]">
+                {t("landing.chart.delta")}
+              </div>
             </div>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={monthlyTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart
+                  data={monthlyTrend}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient id="heroJobs" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.6} />
-                      <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+                      <stop
+                        offset="0%"
+                        stopColor="var(--color-primary)"
+                        stopOpacity={0.6}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="var(--color-primary)"
+                        stopOpacity={0}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                  <CartesianGrid
+                    stroke="var(--color-border)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <Tooltip content={<DarkTooltip />} />
                   <Area
                     type="monotone"
@@ -140,10 +175,30 @@ function LandingPage() {
           description={t("landing.overview.desc")}
         />
         <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <MiniStat icon={Briefcase} label={t("stat.totalJobs")} value={formatNumber(stats.totalJobs)} hint={t("stat.hint.active")} />
-          <MiniStat icon={Building2} label={t("stat.companies")} value={formatNumber(stats.companies)} hint={t("stat.hint.hiring")} />
-          <MiniStat icon={Cpu} label={t("stat.technologies")} value={formatNumber(stats.technologies)} hint={t("stat.hint.tracked")} />
-          <MiniStat icon={MapPin} label={t("stat.cities")} value={formatNumber(stats.cities)} hint={t("stat.hint.acrossChile")} />
+          <MiniStat
+            icon={Briefcase}
+            label={t("stat.totalJobs")}
+            value={formatNumber(stats.totalJobs)}
+            hint={t("stat.hint.active")}
+          />
+          <MiniStat
+            icon={Building2}
+            label={t("stat.companies")}
+            value={formatNumber(stats.companies)}
+            hint={t("stat.hint.hiring")}
+          />
+          <MiniStat
+            icon={Cpu}
+            label={t("stat.technologies")}
+            value={formatNumber(stats.technologies)}
+            hint={t("stat.hint.tracked")}
+          />
+          <MiniStat
+            icon={MapPin}
+            label={t("stat.cities")}
+            value={formatNumber(stats.cities)}
+            hint={t("stat.hint.acrossChile")}
+          />
         </div>
       </section>
 
@@ -159,11 +214,36 @@ function LandingPage() {
           <div className="mt-6 h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topTechs} layout="vertical" margin={{ left: 20 }}>
-                <CartesianGrid stroke="var(--color-border)" horizontal={false} />
-                <XAxis type="number" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="name" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} width={90} />
-                <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--color-muted)", opacity: 0.3 }} />
-                <Bar dataKey="demand" name={t("chart.postings")} fill="var(--color-primary)" radius={[0, 6, 6, 0]} />
+                <CartesianGrid
+                  stroke="var(--color-border)"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  stroke="var(--color-muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  width={90}
+                />
+                <Tooltip
+                  content={<DarkTooltip />}
+                  cursor={{ fill: "var(--color-muted)", opacity: 0.3 }}
+                />
+                <Bar
+                  dataKey="demand"
+                  name={t("chart.postings")}
+                  fill="var(--color-primary)"
+                  radius={[0, 6, 6, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -202,9 +282,7 @@ function LandingPage() {
           <h2 className="mt-4 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-gradient">
             {t("cta.section.title")}
           </h2>
-          <p className="mt-3 text-muted-foreground">
-            {t("cta.section.desc")}
-          </p>
+          <p className="mt-3 text-muted-foreground">{t("cta.section.desc")}</p>
           <Link
             to="/dashboard"
             className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90 transition shadow-glow"
@@ -231,12 +309,22 @@ function SectionHeading({
   return (
     <div className="max-w-2xl">
       {eyebrow ? (
-        <p className="text-xs uppercase tracking-[0.18em] text-primary mb-2">{eyebrow}</p>
+        <p className="text-xs uppercase tracking-[0.18em] text-primary mb-2">
+          {eyebrow}
+        </p>
       ) : null}
-      <h2 className={small ? "text-lg font-semibold tracking-tight" : "font-display text-2xl sm:text-3xl font-semibold tracking-tight"}>
+      <h2
+        className={
+          small
+            ? "text-lg font-semibold tracking-tight"
+            : "font-display text-2xl sm:text-3xl font-semibold tracking-tight"
+        }
+      >
         {title}
       </h2>
-      {description ? <p className="mt-2 text-sm text-muted-foreground">{description}</p> : null}
+      {description ? (
+        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+      ) : null}
     </div>
   );
 }
@@ -255,10 +343,14 @@ function MiniStat({
   return (
     <div className="rounded-2xl border border-border/60 bg-card/60 p-5 shadow-card transition hover:border-primary/40">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
+        <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+          {label}
+        </p>
         <Icon className="h-4 w-4 text-primary" />
       </div>
-      <p className="mt-3 font-display text-2xl sm:text-3xl font-semibold tracking-tight">{value}</p>
+      <p className="mt-3 font-display text-2xl sm:text-3xl font-semibold tracking-tight">
+        {value}
+      </p>
       <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
     </div>
   );
@@ -279,7 +371,7 @@ function FeatureCard({
 }) {
   return (
     <Link
-      to={to as any}
+      to={to}
       className="group rounded-2xl border border-border/60 bg-card/60 p-5 shadow-card hover:border-primary/40 transition flex flex-col"
     >
       <div className="flex items-center gap-3">

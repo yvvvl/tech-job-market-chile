@@ -1,8 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type Lang = "en" | "es";
-
-type Dict = Record<string, string>;
+import { I18nCtx, type Lang, type Dict, type Ctx } from "./i18n-context";
 
 const en: Dict = {
   // Nav / shell
@@ -34,18 +32,23 @@ const en: Dict = {
     "Aggregated signals from job boards, company career pages and ATS feeds across Chile.",
   "landing.demand.eyebrow": "Demand",
   "landing.demand.title": "Most demanded technologies",
-  "landing.demand.desc": "Top 6 technologies by number of open postings this month.",
+  "landing.demand.desc":
+    "Top 6 technologies by number of open postings this month.",
   "feat.junior.title": "Junior Opportunities",
-  "feat.junior.desc": "2,180+ postings open to junior talent — sorted by accessibility, salary and growth.",
+  "feat.junior.desc":
+    "2,180+ postings open to junior talent — sorted by accessibility, salary and growth.",
   "feat.junior.cta": "View junior jobs",
   "feat.salary.title": "Salary Insights",
-  "feat.salary.desc": "Compare salary ranges by stack, seniority and city — calibrated for the Chilean market.",
+  "feat.salary.desc":
+    "Compare salary ranges by stack, seniority and city — calibrated for the Chilean market.",
   "feat.salary.cta": "Explore salaries",
   "feat.learn.title": "Learning Recommendations",
-  "feat.learn.desc": "Personalized learning paths based on real demand signals — not opinions.",
+  "feat.learn.desc":
+    "Personalized learning paths based on real demand signals — not opinions.",
   "feat.learn.cta": "See learning paths",
   "cta.section.title": "Make your next move with data on your side.",
-  "cta.section.desc": "Open the full dashboard — explore demand, salaries and trends across the Chilean tech ecosystem.",
+  "cta.section.desc":
+    "Open the full dashboard — explore demand, salaries and trends across the Chilean tech ecosystem.",
   "cta.section.btn": "Open Dashboard",
 
   // Stats
@@ -63,7 +66,8 @@ const en: Dict = {
   // Dashboard
   "dash.eyebrow": "Dashboard",
   "dash.title": "Chilean tech market dashboard",
-  "dash.desc": "Real-time view across postings, companies, cities and salaries.",
+  "dash.desc":
+    "Real-time view across postings, companies, cities and salaries.",
   "dash.topTech.title": "Most demanded technologies",
   "dash.topTech.desc": "Top 8 by number of active postings",
   "dash.category.title": "By category",
@@ -75,7 +79,8 @@ const en: Dict = {
   "dash.salary.title": "Salary ranges (CLP, monthly)",
   "dash.salary.desc": "Distribution across postings",
   "dash.trend.title": "Monthly trend",
-  "dash.trend.desc": "Postings volume and junior-friendly openings over the past 12 months",
+  "dash.trend.desc":
+    "Postings volume and junior-friendly openings over the past 12 months",
   "chart.postings": "Postings",
   "chart.jobs": "Jobs",
   "chart.totalJobs": "Total jobs",
@@ -84,11 +89,13 @@ const en: Dict = {
   // Explorer
   "exp.eyebrow": "Technology Explorer",
   "exp.title": "Search any technology",
-  "exp.desc": "Demand, trend, related skills and junior accessibility — for every tech in our index.",
+  "exp.desc":
+    "Demand, trend, related skills and junior accessibility — for every tech in our index.",
   "exp.searchPlaceholder": "Try Python, React, AWS…",
   "exp.empty.title": "No matches",
   "exp.empty.desc": "No technologies match",
-  "exp.subtitle": "Aggregated demand and trend signals from active Chilean job postings.",
+  "exp.subtitle":
+    "Aggregated demand and trend signals from active Chilean job postings.",
   "exp.score.demand": "Demand",
   "exp.score.trend": "Trend",
   "exp.score.junior": "Junior friendly",
@@ -108,7 +115,8 @@ const en: Dict = {
   // Recommendations
   "rec.eyebrow": "Career recommendations",
   "rec.title": "Learning paths backed by real demand",
-  "rec.desc": "Roadmaps assembled from current Chilean job postings — not opinions or rankings.",
+  "rec.desc":
+    "Roadmaps assembled from current Chilean job postings — not opinions or rankings.",
   "rec.path": "Path",
   "rec.demandScore": "Demand score",
   "rec.indicator.demand": "Market demand",
@@ -117,16 +125,20 @@ const en: Dict = {
   "rec.weeks": "weeks",
   "rec.exploreStack": "Explore stack",
   "rec.suggested.title": "Suggested technologies for juniors",
-  "rec.suggested.desc": "Highest combined score of demand and junior accessibility — great places to start.",
+  "rec.suggested.desc":
+    "Highest combined score of demand and junior accessibility — great places to start.",
   "rec.juniorSuffix": "junior",
 
   // Learning paths
   "path.frontend.title": "Frontend Engineer",
-  "path.frontend.desc": "Build modern interfaces for Chilean fintech and SaaS companies.",
+  "path.frontend.desc":
+    "Build modern interfaces for Chilean fintech and SaaS companies.",
   "path.backend.title": "Backend Engineer",
-  "path.backend.desc": "Power APIs and data pipelines for high-growth startups.",
+  "path.backend.desc":
+    "Power APIs and data pipelines for high-growth startups.",
   "path.data.title": "Data Analyst",
-  "path.data.desc": "Turn raw data into business decisions across retail and banking.",
+  "path.data.desc":
+    "Turn raw data into business decisions across retail and banking.",
   "path.cloud.title": "Cloud & DevOps",
   "path.cloud.desc": "Operate cloud infrastructure for enterprise migrations.",
 };
@@ -159,18 +171,23 @@ const es: Dict = {
     "Señales agregadas desde portales de empleo, páginas de carrera y ATS en todo Chile.",
   "landing.demand.eyebrow": "Demanda",
   "landing.demand.title": "Tecnologías más demandadas",
-  "landing.demand.desc": "Top 6 de tecnologías por número de ofertas abiertas este mes.",
+  "landing.demand.desc":
+    "Top 6 de tecnologías por número de ofertas abiertas este mes.",
   "feat.junior.title": "Oportunidades Junior",
-  "feat.junior.desc": "Más de 2.180 ofertas abiertas a talento junior — ordenadas por accesibilidad, salario y crecimiento.",
+  "feat.junior.desc":
+    "Más de 2.180 ofertas abiertas a talento junior — ordenadas por accesibilidad, salario y crecimiento.",
   "feat.junior.cta": "Ver empleos junior",
   "feat.salary.title": "Datos de Salarios",
-  "feat.salary.desc": "Compara rangos salariales por stack, seniority y ciudad — calibrado al mercado chileno.",
+  "feat.salary.desc":
+    "Compara rangos salariales por stack, seniority y ciudad — calibrado al mercado chileno.",
   "feat.salary.cta": "Explorar salarios",
   "feat.learn.title": "Recomendaciones de Aprendizaje",
-  "feat.learn.desc": "Rutas de aprendizaje personalizadas basadas en demanda real — no en opiniones.",
+  "feat.learn.desc":
+    "Rutas de aprendizaje personalizadas basadas en demanda real — no en opiniones.",
   "feat.learn.cta": "Ver rutas de aprendizaje",
   "cta.section.title": "Toma tu próxima decisión con datos de tu lado.",
-  "cta.section.desc": "Abre el panel completo — explora demanda, salarios y tendencias del ecosistema tech chileno.",
+  "cta.section.desc":
+    "Abre el panel completo — explora demanda, salarios y tendencias del ecosistema tech chileno.",
   "cta.section.btn": "Abrir Panel",
 
   "stat.totalJobs": "Empleos Totales",
@@ -186,7 +203,8 @@ const es: Dict = {
 
   "dash.eyebrow": "Panel",
   "dash.title": "Panel del mercado tech chileno",
-  "dash.desc": "Vista en tiempo real de ofertas, empresas, ciudades y salarios.",
+  "dash.desc":
+    "Vista en tiempo real de ofertas, empresas, ciudades y salarios.",
   "dash.topTech.title": "Tecnologías más demandadas",
   "dash.topTech.desc": "Top 8 por número de ofertas activas",
   "dash.category.title": "Por categoría",
@@ -198,7 +216,8 @@ const es: Dict = {
   "dash.salary.title": "Rangos salariales (CLP, mensual)",
   "dash.salary.desc": "Distribución entre ofertas",
   "dash.trend.title": "Tendencia mensual",
-  "dash.trend.desc": "Volumen de ofertas y vacantes junior-friendly en los últimos 12 meses",
+  "dash.trend.desc":
+    "Volumen de ofertas y vacantes junior-friendly en los últimos 12 meses",
   "chart.postings": "Ofertas",
   "chart.jobs": "Empleos",
   "chart.totalJobs": "Empleos totales",
@@ -206,11 +225,13 @@ const es: Dict = {
 
   "exp.eyebrow": "Explorador de Tecnologías",
   "exp.title": "Busca cualquier tecnología",
-  "exp.desc": "Demanda, tendencia, skills relacionadas y accesibilidad junior — para cada tecnología.",
+  "exp.desc":
+    "Demanda, tendencia, skills relacionadas y accesibilidad junior — para cada tecnología.",
   "exp.searchPlaceholder": "Prueba Python, React, AWS…",
   "exp.empty.title": "Sin resultados",
   "exp.empty.desc": "Ninguna tecnología coincide con",
-  "exp.subtitle": "Demanda y tendencia agregadas desde ofertas activas en Chile.",
+  "exp.subtitle":
+    "Demanda y tendencia agregadas desde ofertas activas en Chile.",
   "exp.score.demand": "Demanda",
   "exp.score.trend": "Tendencia",
   "exp.score.junior": "Apto junior",
@@ -229,7 +250,8 @@ const es: Dict = {
 
   "rec.eyebrow": "Recomendaciones de carrera",
   "rec.title": "Rutas de aprendizaje respaldadas por demanda real",
-  "rec.desc": "Roadmaps construidos a partir de ofertas reales en Chile — no opiniones ni rankings.",
+  "rec.desc":
+    "Roadmaps construidos a partir de ofertas reales en Chile — no opiniones ni rankings.",
   "rec.path": "Ruta",
   "rec.demandScore": "Score de demanda",
   "rec.indicator.demand": "Demanda del mercado",
@@ -238,23 +260,25 @@ const es: Dict = {
   "rec.weeks": "semanas",
   "rec.exploreStack": "Explorar stack",
   "rec.suggested.title": "Tecnologías sugeridas para juniors",
-  "rec.suggested.desc": "Mayor score combinado de demanda y accesibilidad junior — un gran punto de partida.",
+  "rec.suggested.desc":
+    "Mayor score combinado de demanda y accesibilidad junior — un gran punto de partida.",
   "rec.juniorSuffix": "junior",
 
   "path.frontend.title": "Frontend Engineer",
-  "path.frontend.desc": "Construye interfaces modernas para fintech y SaaS chilenas.",
+  "path.frontend.desc":
+    "Construye interfaces modernas para fintech y SaaS chilenas.",
   "path.backend.title": "Backend Engineer",
-  "path.backend.desc": "Potencia APIs y pipelines de datos para startups en crecimiento.",
+  "path.backend.desc":
+    "Potencia APIs y pipelines de datos para startups en crecimiento.",
   "path.data.title": "Analista de Datos",
-  "path.data.desc": "Convierte datos crudos en decisiones de negocio en retail y banca.",
+  "path.data.desc":
+    "Convierte datos crudos en decisiones de negocio en retail y banca.",
   "path.cloud.title": "Cloud & DevOps",
-  "path.cloud.desc": "Opera infraestructura cloud para migraciones empresariales.",
+  "path.cloud.desc":
+    "Opera infraestructura cloud para migraciones empresariales.",
 };
 
 const dicts: Record<Lang, Dict> = { en, es };
-
-type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: string) => string };
-const I18nCtx = createContext<Ctx>({ lang: "en", setLang: () => {}, t: (k) => k });
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
@@ -262,24 +286,31 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("lang") as Lang | null;
-      if (stored === "en" || stored === "es") setLangState(stored);
-    } catch {}
+      if (stored === "en" || stored === "es") {
+        setLangState(stored);
+      }
+    } catch {
+      console.warn("Could not read language from localStorage.");
+    }
   }, []);
 
   const setLang = (l: Lang) => {
     setLangState(l);
     try {
       localStorage.setItem("lang", l);
-    } catch {}
+    } catch {
+      console.warn("Could not save language to localStorage.");
+    }
   };
 
   const value = useMemo<Ctx>(
-    () => ({ lang, setLang, t: (k: string) => dicts[lang][k] ?? dicts.en[k] ?? k }),
+    () => ({
+      lang,
+      setLang,
+      t: (k: string) => dicts[lang][k] ?? dicts.en[k] ?? k,
+    }),
     [lang],
   );
 
   return <I18nCtx.Provider value={value}>{children}</I18nCtx.Provider>;
 }
-
-export const useI18n = () => useContext(I18nCtx);
-export const useT = () => useContext(I18nCtx).t;

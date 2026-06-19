@@ -11,6 +11,20 @@ services:
     volumes:
       - tech_jobs_pgdata:/var/lib/postgresql/data
 
+  postgres_test:
+    image: postgres:16-alpine
+    container_name: tech_jobs_postgres_test
+    profiles:
+      - test
+    environment:
+      POSTGRES_DB: tech_jobs_chile_test
+      POSTGRES_USER: techuser
+      POSTGRES_PASSWORD: techpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - tech_jobs_test_pgdata:/var/lib/postgresql/data
+
   adminer:
     image: adminer
     container_name: tech_jobs_adminer
@@ -21,3 +35,4 @@ services:
 
 volumes:
   tech_jobs_pgdata:
+  tech_jobs_test_pgdata:

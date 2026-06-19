@@ -3,11 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.routers.health import router as health_router
-from app.routers.stats import router as stats_router
 from app.routers.recommendations import router as recommendations_router
-
-
-
+from app.routers.stats import router as stats_router
+from app.schemas.common import RootResponse
 
 app = FastAPI(
     title=settings.app_name,
@@ -32,11 +30,14 @@ app.include_router(stats_router)
 app.include_router(recommendations_router)
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "Tech Job Market Intelligence Chile API",
-        "docs": "/docs",
-        "health": "/api/v1/health",
-        "overview": "/api/v1/stats/overview",
-    }
+@app.get(
+    "/",
+    response_model=RootResponse,
+)
+def root() -> RootResponse:
+    return RootResponse(
+        message="Tech Job Market Intelligence Chile API",
+        docs="/docs",
+        health="/api/v1/health",
+        overview="/api/v1/stats/overview",
+    )

@@ -5,24 +5,21 @@ from app.core.config import settings
 
 engine = create_engine(settings.database_url, pool_pre_ping=True)
 
-SessionLocal = sessionmaker(
-    autocommit=False, 
-    autoflush=False, 
-    bind=engine
-)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 def get_db():
-    db=SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-        
-        
+
+
 def check_database_connection():
     try:
         with engine.connect() as conection:
             result = conection.execute(text("SELECT 1"))
             return result.scalar() == 1
-    except Exception as e:
+    except Exception:
         return False

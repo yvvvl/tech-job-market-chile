@@ -16,7 +16,6 @@ from app.pipeline.tech_rules import (
     infer_seniority,
 )
 
-
 REQUIRED_COLUMNS = {
     "source",
     "source_url",
@@ -150,10 +149,7 @@ def validate_columns(headers: list[str] | None) -> None:
     missing = REQUIRED_COLUMNS - set(headers)
 
     if missing:
-        raise ValueError(
-            "Faltan columnas requeridas en el CSV: "
-            + ", ".join(sorted(missing))
-        )
+        raise ValueError("Faltan columnas requeridas en el CSV: " + ", ".join(sorted(missing)))
 
 
 def get_or_create_company(db: Session, name: str) -> Company:
@@ -199,11 +195,7 @@ def job_exists(db: Session, source_url: str | None, title: str, company_id: int 
         return False
 
     if source_url:
-        existing_by_url = (
-            db.query(JobPosting)
-            .filter(JobPosting.source_url == source_url)
-            .first()
-        )
+        existing_by_url = db.query(JobPosting).filter(JobPosting.source_url == source_url).first()
 
         if existing_by_url:
             return True
@@ -272,9 +264,7 @@ def import_csv(file_path: Path, replace: bool = False) -> None:
                     " ".join([title, description, " ".join(technologies_raw)])
                 )
 
-                technologies = normalize_technology_list(
-                    technologies_raw + detected_technologies
-                )
+                technologies = normalize_technology_list(technologies_raw + detected_technologies)
 
                 seniority = clean_text(row.get("seniority")) or infer_seniority(
                     title,

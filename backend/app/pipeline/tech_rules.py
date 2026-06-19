@@ -1,7 +1,6 @@
 import re
 from collections import Counter
 
-
 TECHNOLOGIES: dict[str, str] = {
     "Python": "Language",
     "JavaScript": "Language",
@@ -88,7 +87,9 @@ def extract_technologies(text: str) -> list[str]:
 def infer_seniority(title: str, description: str, fallback: str | None = None) -> str:
     text = f"{title} {description}".lower()
 
-    if any(word in text for word in ["trainee", "práctica", "practica", "intern", "sin experiencia"]):
+    if any(
+        word in text for word in ["trainee", "práctica", "practica", "intern", "sin experiencia"]
+    ):
         return "trainee"
     if any(word in text for word in ["junior", "jr", "recién egresado", "recien egresado"]):
         return "junior"
