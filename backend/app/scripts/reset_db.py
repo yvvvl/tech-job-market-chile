@@ -1,7 +1,5 @@
-from app.database.models import Base
-from app.database.session import engine
+from app.database.migrations import reset_database
 
 if __name__ == "__main__":
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    print("Base de datos recreada correctamente.")
+    reset_database()
+    print("Base de datos recreada mediante Alembic.")

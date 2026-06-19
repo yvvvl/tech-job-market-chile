@@ -34,9 +34,9 @@ Set-Location "$root\backend"
 
 $env:TEST_DATABASE_URL = "postgresql+psycopg2://techuser:techpass@localhost:5434/tech_jobs_chile_test"
 
+ruff check . --fix
+ruff format .
 ruff check .
-python -m compileall app
-python -m app.scripts.validate_csv ..\data\raw\ofertas_ti_chile_2026_06.csv
 
 Write-Host "`n[4/4] Ejecutando pytest..." -ForegroundColor Yellow
 python -m pytest

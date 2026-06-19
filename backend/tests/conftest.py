@@ -6,10 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-TEST_DATABASE_URL = (
-    "postgresql+psycopg2://techuser:techpass"
-    "@localhost:5434/tech_jobs_chile_test"
-)
+TEST_DATABASE_URL = "postgresql+psycopg2://techuser:techpass@localhost:5434/tech_jobs_chile_test"
 
 os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL", TEST_DATABASE_URL)
 
