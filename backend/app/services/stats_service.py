@@ -94,7 +94,11 @@ def get_stats_summary(db: Session, filters: StatsFilters) -> dict:
     }
 
 
-def get_technology_rows(db: Session, filters: StatsFilters, limit: int = 30) -> list[dict]:
+def get_technology_rows(
+    db: Session,
+    filters: StatsFilters,
+    limit: int | None = 30,
+) -> list[dict]:
     salary_mid = salary_midpoint_expression()
 
     junior_case = case(
@@ -110,26 +114,36 @@ def get_technology_rows(db: Session, filters: StatsFilters, limit: int = 30) -> 
             func.sum(junior_case).label("junior_count"),
             func.avg(salary_mid).label("avg_salary"),
         )
-        .join(JobPostingTechnology, JobPostingTechnology.technology_id == Technology.id)
-        .join(JobPosting, JobPosting.id == JobPostingTechnology.job_posting_id)
+        .join(
+            JobPostingTechnology,
+            JobPostingTechnology.technology_id == Technology.id,
+        )
+        .join(
+            JobPosting,
+            JobPosting.id == JobPostingTechnology.job_posting_id,
+        )
     )
 
     query = apply_job_filters(query, filters)
 
-    rows = (
-        query.group_by(Technology.id, Technology.name, Technology.category)
-        .order_by(func.count(JobPostingTechnology.job_posting_id).desc())
-        .limit(limit)
-        .all()
-    )
+    query = query.group_by(
+        Technology.id,
+        Technology.name,
+        Technology.category,
+    ).order_by(func.count(JobPostingTechnology.job_posting_id).desc())
+
+    if limit is not None:
+        query = query.limit(limit)
+
+    rows = query.all()
 
     technologies = []
 
     for row in rows:
         demand = int(row.demand or 0)
         junior_count = int(row.junior_count or 0)
+
         junior_friendly = round((junior_count / demand) * 100) if demand else 0
-        avg_salary = int(row.avg_salary or 0)
 
         technologies.append(
             {
@@ -138,7 +152,7 @@ def get_technology_rows(db: Session, filters: StatsFilters, limit: int = 30) -> 
                 "demand": demand,
                 "trend": 0,
                 "juniorFriendly": junior_friendly,
-                "avgSalaryCLP": avg_salary,
+                "avgSalaryCLP": int(row.avg_salary or 0),
                 "related": [],
             }
         )
