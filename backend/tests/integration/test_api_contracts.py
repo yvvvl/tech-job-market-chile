@@ -164,3 +164,18 @@ def test_recommendations_contract(client: TestClient) -> None:
             "totalDemand",
             "avgSalaryCLP",
         }.issubset(data["learningPaths"][0])
+
+
+def test_openapi_contains_response_schemas(
+    client: TestClient,
+) -> None:
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+
+    schemas = response.json()["components"]["schemas"]
+
+    assert "HealthResponse" in schemas
+    assert "OverviewResponse" in schemas
+    assert "DataQualityResponse" in schemas
+    assert "RecommendationsResponse" in schemas
