@@ -1,3 +1,15 @@
+import {
+  categoryBreakdown as demoCategoryBreakdown,
+  cities as demoCities,
+  delay,
+  learningPaths as demoLearningPaths,
+  monthlyTrend as demoMonthlyTrend,
+  salaryRanges as demoSalaryRanges,
+  seniority as demoSeniority,
+  stats as demoStats,
+  technologies as demoTechnologies,
+} from "@/lib/mockData";
+
 export type Technology = {
   name: string;
   category:
@@ -71,25 +83,93 @@ export type RecommendationsResponse = {
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1";
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+const API_FALLBACK_ENABLED = import.meta.env.VITE_API_FALLBACK === "true";
 
-async function apiFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+const demoOverview: MarketOverview = {
+  stats: demoStats,
+  monthlyTrend: demoMonthlyTrend,
+  technologies: demoTechnologies,
+  categoryBreakdown: demoCategoryBreakdown,
+  cities: demoCities,
+  seniority: demoSeniority,
+  salaryRanges: demoSalaryRanges,
+};
 
-  if (!response.ok) {
-    throw new Error(`API error ${response.status}: ${response.statusText}`);
+const demoRecommendations: RecommendationsResponse = {
+  learningPaths: demoLearningPaths.map((path) => {
+    const matchingTechnologies = demoTechnologies.filter((technology) =>
+      path.techs.includes(technology.name),
+    );
+    const totalDemand = matchingTechnologies.reduce(
+      (total, technology) => total + technology.demand,
+      0,
+    );
+    const avgSalaryCLP = matchingTechnologies.length
+      ? Math.round(
+          matchingTechnologies.reduce(
+            (total, technology) => total + technology.avgSalaryCLP,
+            0,
+          ) / matchingTechnologies.length,
+        )
+      : 0;
+
+    return {
+      ...path,
+      totalDemand,
+      avgSalaryCLP,
+    };
+  }),
+  suggested: [...demoTechnologies]
+    .sort(
+      (a, b) =>
+        b.demand + b.juniorFriendly * 20 - (a.demand + a.juniorFriendly * 20),
+    )
+    .slice(0, 6),
+  metadata: {
+    totalTechnologies: demoTechnologies.length,
+    totalPaths: demoLearningPaths.length,
+    source: "versioned demo dataset",
+  },
+};
+
+async function apiFetch<T>(path: string, demoData: T): Promise<T> {
+  if (DEMO_MODE) {
+    return delay(demoData, 250);
   }
 
-  return response.json() as Promise<T>;
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`);
+
+    if (!response.ok) {
+      throw new Error(`API error ${response.status}: ${response.statusText}`);
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (API_FALLBACK_ENABLED) {
+      console.warn(`API unavailable for ${path}; using demo data.`, error);
+      return delay(demoData, 150);
+    }
+
+    throw error;
+  }
 }
 
 export function getMarketOverview() {
-  return apiFetch<MarketOverview>("/stats/overview");
+  return apiFetch<MarketOverview>("/stats/overview", demoOverview);
 }
 
 export function getTechnologies() {
-  return apiFetch<Technology[]>("/stats/technologies");
+  return apiFetch<Technology[]>(
+    "/stats/technologies",
+    demoOverview.technologies,
+  );
 }
 
 export function getRecommendations() {
-  return apiFetch<RecommendationsResponse>("/recommendations");
+  return apiFetch<RecommendationsResponse>(
+    "/recommendations",
+    demoRecommendations,
+  );
 }

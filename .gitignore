@@ -55,3 +55,7 @@ Thumbs.db
 # Misc
 *.tmp
 *.bak
+
+# Cloudflare Wrangler local state
+.wrangler/
+frontend/.wrangler/
