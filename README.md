@@ -21,6 +21,8 @@ Este proyecto está pensado como portafolio técnico para demostrar habilidades 
 
 Estado actual: MVP funcional.
 
+La demo pública usa datos simulados para mantenerse disponible de forma gratuita. El backend real está implementado con FastAPI, PostgreSQL, Alembic, tests y CI.
+
 El proyecto actualmente permite:
 
 - Levantar PostgreSQL con Docker.
