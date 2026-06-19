@@ -1,7 +1,7 @@
 # Tech Job Market Intelligence Chile
 
 
-[![CI]()](https://github.com/yvvvl/tech-job-market-chile/actions/workflows/ci.yml)
+[![CI]()](https://github.com/yvvvl/tech-job-market-chile/actions/workflows/ci.yml/badge.svg?branch=master)
 
 Demo pública: https://tech-job-market-chile-demo.silva-ignacio-696.workers.dev/
 
