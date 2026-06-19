@@ -1,5 +1,11 @@
 # Tech Job Market Intelligence Chile
 
+
+[![CI]()](https://github.com/yvvvl/tech-job-market-chile/actions/workflows/ci.yml)
+
+Demo pública: https://tech-job-market-chile-demo.silva-ignacio-696.workers.dev/
+
+
 Plataforma de análisis del mercado laboral TI en Chile. El proyecto procesa ofertas laborales desde archivos CSV curados, extrae tecnologías, clasifica cargos por seniority/categoría y expone métricas mediante una API REST y un dashboard web.
 
 El objetivo es responder preguntas como:
